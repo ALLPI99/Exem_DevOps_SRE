@@ -1,0 +1,18 @@
+# crontab 설정 파일 열기
+sudo crontab -e
+
+# 3시간 주기로 스크립트 파일 실행
+0 */3 * * * /usr/local/bin/monitor.sh
+
+# 파일에 아래의 스크립트를 복사하고 저장
+sudo nano /usr/local/bin/monitor.sh
+
+# 현재 날짜와 시간
+now=$(date +"%Y-%m-%d_%H-%M-%S")
+# /tmp/[현재날짜_시간].log 파일을 생성
+echo "$now CPU: $cpu% | Memory: $mem | Disk: $disk" >> "/tmp/$now.log"
+# 파일의 수가 12개를 넘으면 오래된 파일부터 삭제
+find /tmp/ -name "*.log" -type f -mtime +1 -exec rm -f {} \;
+
+# 실행 권한을 부여
+sudo chmod +x /usr/local/bin/monitor.sh
